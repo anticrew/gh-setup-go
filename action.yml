@@ -1,4 +1,4 @@
-name: Build Anticrew Go package
+name: Setup Go for Anticrew package
 inputs:
   go-version:
     description: The Go version to be installed
