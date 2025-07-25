@@ -9,6 +9,10 @@ inputs:
     type: boolean
     required: false
     default: false
+  go-build-tags:
+    description: Custom build tags to be used in 'go build' command
+    type: string
+    default: ''
   run-shell:
     description: Which shell will be used for run commands
     type: string
@@ -49,4 +53,4 @@ runs:
     - name: Build go
       shell: ${{ inputs.run-shell }}
       run:
-        go build -v ./...
+        go build -v -tags ${{ inputs.go-build-tags }}./...
