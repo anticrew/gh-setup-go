@@ -2,20 +2,16 @@ name: Setup Go for Anticrew package
 inputs:
   go-version:
     description: The Go version to be installed
-    type: string
     required: true
   go-build:
     description: If set to true action will run 'go build -v ./...' after prepare workspace
-    type: boolean
     required: false
-    default: false
+    default: 'false'
   go-build-tags:
     description: Custom build tags to be used in 'go build' command
-    type: string
     default: ''
   run-shell:
     description: Which shell will be used for run commands
-    type: string
     required: false
     default: 'sh'
 
@@ -51,6 +47,7 @@ runs:
         go mod download
 
     - name: Build go
+      if: inputs.go-build == 'true'
       shell: ${{ inputs.run-shell }}
       run:
         go build -v -tags ${{ inputs.go-build-tags }}./...
