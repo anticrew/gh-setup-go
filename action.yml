@@ -38,6 +38,7 @@ runs:
     - name: Disable go proxy
       shell: ${{ inputs.run-shell }}
       run: |
+        go env -w GOPATH=~/go && \
         go env -w GOPROXY=direct && \
         go env -w GOPRIVATE=github.com/anticrew/*
 
