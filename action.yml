@@ -1,0 +1,54 @@
+name: Setup Go for Anticrew package
+inputs:
+  go-version:
+    description: The Go version to be installed
+    required: true
+  go-build:
+    description: If set to true action will run 'go build -v ./...' after prepare workspace
+    required: false
+    default: 'false'
+  go-build-tags:
+    description: Custom build tags to be used in 'go build' command
+    default: ''
+  run-shell:
+    description: Which shell will be used for run commands
+    required: false
+    default: 'sh'
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: ${{ inputs.go-version }}
+
+    - name: Set up cache
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cache/go-build
+          ~/go/pkg/mod
+        key: ${{ runner.os }}-go
+        restore-keys: |
+          ${{ runner.os }}-go
+
+    - name: Disable go proxy
+      shell: ${{ inputs.run-shell }}
+      run: |
+        go env -w GOPATH=$HOME/go && \
+        go env -w GOPROXY=direct && \
+        go env -w GOPRIVATE=github.com/anticrew/*
+
+    - name: Download dependencies
+      shell: ${{ inputs.run-shell }}
+      run:
+        go mod download
+
+    - name: Build go
+      if: inputs.go-build == 'true'
+      shell: ${{ inputs.run-shell }}
+      run:
+        go build -v -tags ${{ inputs.go-build-tags }} ./...
